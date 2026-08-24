@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마이링고 | 나만의 업무 영어 표현장</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --accent-soft: #f3f4f6;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .count-badge {
+      white-space: nowrap;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .composer {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    input {
+      min-height: 48px;
+      padding: 0 14px;
+    }
+
+    textarea {
+      min-height: 48px;
+      max-height: 120px;
+      resize: vertical;
+      padding: 12px 14px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
+    }
+
+    .add-btn {
+      align-self: end;
+      min-height: 48px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .add-btn:hover { opacity: .92; }
+
+    .list-panel { overflow: hidden; }
+
+    .list-toolbar {
+      display: flex;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-wrap span {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    #searchInput { padding-left: 38px; }
+
+    .expression-list { list-style: none; margin: 0; padding: 0; }
+
+    .expression-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .expression-item:last-child { border-bottom: none; }
+
+    .english {
+      margin: 0;
+      font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      word-break: break-word;
+    }
+
+    .meaning {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .item-meta {
+      margin-top: 9px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 11px;
+      color: #374151;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .icon-btn:hover { background: var(--accent-soft); }
+    .icon-btn.danger:hover { background: var(--danger-soft); color: var(--danger); border-color: #fecaca; }
+
+    .empty-state {
+      padding: 54px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty-state strong {
+      display: block;
+      color: #374151;
+      margin-bottom: 7px;
+    }
+
+    .footer-note {
+      margin: 14px 4px 0;
+      color: #9ca3af;
+      font-size: 0.78rem;
+      text-align: right;
+    }
+
+    @media (max-width: 760px) {
+      .app-shell { width: min(100% - 20px, 960px); padding-top: 24px; }
+      .hero { align-items: flex-start; flex-direction: column; }
+      .field-grid { grid-template-columns: 1fr; }
+      .add-btn { width: 100%; }
+      .expression-item { grid-template-columns: 1fr; gap: 14px; }
+      .actions { justify-content: flex-end; }
+      .composer { padding: 16px; }
+      .list-toolbar { padding: 14px; }
+      .expression-item { padding: 17px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div>
+        <h1>마이링고</h1>
+        <p>업무에서 만난 영어 표현을 저장하고, 틈틈이 다시 꺼내보는 나만의 복습장</p>
+      </div>
+      <div class="count-badge"><span id="itemCount">0</span>개 표현 저장됨</div>
+    </section>
+
+    <section class="panel composer" aria-label="영어 표현 추가">
+      <form id="expressionForm">
+        <div class="field-grid">
+          <div class="field">
+            <label for="englishInput">영어 표현</label>
+            <input id="englishInput" type="text" placeholder="예: Better than I deserve." autocomplete="off" required />
+          </div>
+
+          <div class="field">
+            <label for="meaningInput">뜻 · 메모</label>
+            <textarea id="meaningInput" placeholder="예: 과분할 정도로 잘 지내요. / 인사 응답 표현"></textarea>
+          </div>
+
+          <button class="add-btn" type="submit">추가</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel list-panel" aria-label="저장한 영어 표현">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="영어 표현이나 뜻 검색" autocomplete="off" />
+        </div>
+      </div>
+
+      <ul id="expressionList" class="expression-list"></ul>
+    </section>
+
+    <p class="footer-note">데이터는 이 브라우저의 localStorage에만 저장됩니다.</p>
+  </main>
+
+  <script>
+    const STORAGE_KEY = 'mylingo_expressions_v1';
+
+    const form = document.getElementById('expressionForm');
+    const englishInput = document.getElementById('englishInput');
+    const meaningInput = document.getElementById('meaningInput');
+    const searchInput = document.getElementById('searchInput');
+    const expressionList = document.getElementById('expressionList');
+    const itemCount = document.getElementById('itemCount');
+
+    let expressions = [];
+
+    // ------------------------------
+    // Data layer
+    // 향후 Supabase 이전 시 이 함수들만 교체하면 되도록 분리했습니다.
+    // ------------------------------
+
+    function loadExpressions() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : [];
+      } catch (error) {
+        console.error('저장된 데이터를 불러오지 못했습니다.', error);
+        return [];
+      }
+    }
+
+    function saveExpressions(items) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+      } catch (error) {
+        console.error('데이터를 저장하지 못했습니다.', error);
+      }
+    }
+
+    function createExpressionRecord(english, meaning) {
+      return {
+        id: (crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random()}`,
+        english: english.trim(),
+        meaning: meaning.trim(),
+        createdAt: new Date().toISOString()
+      };
+    }
+
+    function addExpression(record) {
+      expressions.unshift(record);
+      saveExpressions(expressions);
+    }
+
+    function removeExpression(id) {
+      expressions = expressions.filter(item => item.id !== id);
+      saveExpressions(expressions);
+    }
+
+    // ------------------------------
+    // ElevenLabs integration placeholder
+    // 나중에 API 연결 시 이 함수 내부를 구현하면 됩니다.
+    // ------------------------------
+    function playAudioWithElevenLabs(text) {
+      // TODO: ElevenLabs Text-to-Speech API 연동
+      // 예: fetch()로 음성 생성 → Blob URL 생성 → Audio 재생
+      console.log('ElevenLabs 연결 예정:', text);
+    }
+
+    // ------------------------------
+    // UI
+    // ------------------------------
+
+    function escapeHtml(value = '') {
+      return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatDate(isoString) {
+      const date = new Date(isoString);
+      if (Number.isNaN(date.getTime())) return '';
+      return new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }).format(date);
+    }
+
+    function getFilteredExpressions() {
+      const keyword = searchInput.value.trim().toLowerCase();
+      if (!keyword) return expressions;
+
+      return expressions.filter(item => {
+        const target = `${item.english} ${item.meaning}`.toLowerCase();
+        return target.includes(keyword);
+      });
+    }
+
+    function renderExpressions() {
+      const filtered = getFilteredExpressions();
+      itemCount.textContent = expressions.length;
+
+      if (filtered.length === 0) {
+        expressionList.innerHTML = `
+          <li class="empty-state">
+            <strong>${expressions.length === 0 ? '아직 저장한 표현이 없습니다.' : '검색 결과가 없습니다.'}</strong>
+            <span>${expressions.length === 0 ? '위 입력칸에 첫 영어 표현을 추가해 보세요.' : '다른 검색어를 입력해 보세요.'}</span>
+          </li>
+        `;
+        return;
+      }
+
+      expressionList.innerHTML = filtered.map(item => `
+        <li class="expression-item" data-id="${item.id}">
+          <div>
+            <p class="english">${escapeHtml(item.english)}</p>
+            <p class="meaning">${escapeHtml(item.meaning || '뜻·메모 없음')}</p>
+            <div class="item-meta">${formatDate(item.createdAt)}</div>
+          </div>
+          <div class="actions">
+            <button class="icon-btn listen-btn" type="button" aria-label="듣기">듣기</button>
+            <button class="icon-btn danger delete-btn" type="button" aria-label="삭제">삭제</button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const english = englishInput.value.trim();
+      const meaning = meaningInput.value.trim();
+      if (!english) return;
+
+      const record = createExpressionRecord(english, meaning);
+      addExpression(record);
+      renderExpressions();
+
+      form.reset();
+      englishInput.focus();
+    });
+
+    searchInput.addEventListener('input', renderExpressions);
+
+    expressionList.addEventListener('click', (event) => {
+      const item = event.target.closest('.expression-item');
+      if (!item) return;
+
+      const id = item.dataset.id;
+      const record = expressions.find(entry => entry.id === id);
+      if (!record) return;
+
+      if (event.target.classList.contains('listen-btn')) {
+        playAudioWithElevenLabs(record.english);
+      }
+
+      if (event.target.classList.contains('delete-btn')) {
+        const confirmed = confirm(`“${record.english}” 표현을 삭제할까요?`);
+        if (!confirmed) return;
+        removeExpression(id);
+        renderExpressions();
+      }
+    });
+
+    function initApp() {
+      expressions = loadExpressions();
+      renderExpressions();
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
