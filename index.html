@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>마이링고 | 나만의 업무 영어 표현장</title>
+  <title>마이링고 | 나만의 업무 영어 복습장</title>
   <style>
     :root {
       --bg: #f6f7f9;
@@ -78,6 +78,19 @@
     .composer {
       padding: 20px;
       margin-bottom: 18px;
+    }
+
+    .composer-title {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .composer-desc {
+      margin: -7px 0 14px;
+      color: var(--muted);
+      font-size: 0.84rem;
     }
 
     .field-grid {
@@ -166,9 +179,34 @@
 
     #searchInput { padding-left: 38px; }
 
-    .expression-list { list-style: none; margin: 0; padding: 0; }
+    .section-block + .section-block {
+      border-top: 1px solid var(--line);
+    }
 
-    .expression-item {
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 18px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .section-count {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .item-list { list-style: none; margin: 0; padding: 0; }
+
+    .list-item {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
       gap: 18px;
@@ -177,9 +215,9 @@
       background: #fff;
     }
 
-    .expression-item:last-child { border-bottom: none; }
+    .list-item:last-child { border-bottom: none; }
 
-    .english {
+    .primary-text {
       margin: 0;
       font-size: clamp(1.05rem, 2.6vw, 1.25rem);
       font-weight: 800;
@@ -187,7 +225,7 @@
       word-break: break-word;
     }
 
-    .meaning {
+    .secondary-text {
       margin: 6px 0 0;
       color: var(--muted);
       font-size: 0.94rem;
@@ -221,7 +259,7 @@
     .icon-btn.danger:hover { background: var(--danger-soft); color: var(--danger); border-color: #fecaca; }
 
     .empty-state {
-      padding: 54px 20px;
+      padding: 34px 20px;
       text-align: center;
       color: var(--muted);
     }
@@ -244,11 +282,11 @@
       .hero { align-items: flex-start; flex-direction: column; }
       .field-grid { grid-template-columns: 1fr; }
       .add-btn { width: 100%; }
-      .expression-item { grid-template-columns: 1fr; gap: 14px; }
+      .list-item { grid-template-columns: 1fr; gap: 14px; }
       .actions { justify-content: flex-end; }
       .composer { padding: 16px; }
       .list-toolbar { padding: 14px; }
-      .expression-item { padding: 17px 16px; }
+      .list-item { padding: 17px 16px; }
     }
   </style>
 </head>
@@ -257,12 +295,16 @@
     <section class="hero">
       <div>
         <h1>마이링고</h1>
-        <p>업무에서 만난 영어 표현을 저장하고, 틈틈이 다시 꺼내보는 나만의 복습장</p>
+        <p>업무 영어 문장과 주요 단어·구문을 저장하고, 한 번에 검색하는 나만의 복습장</p>
       </div>
-      <div class="count-badge"><span id="itemCount">0</span>개 표현 저장됨</div>
+      <div class="count-badge">
+        문장 <span id="expressionCount">0</span> · 단어/구문 <span id="termCount">0</span>
+      </div>
     </section>
 
-    <section class="panel composer" aria-label="영어 표현 추가">
+    <section class="panel composer" aria-label="영어 문장 추가">
+      <h2 class="composer-title">영어 문장</h2>
+      <p class="composer-desc">복습하고 싶은 완성 문장이나 업무 표현을 저장하세요.</p>
       <form id="expressionForm">
         <div class="field-grid">
           <div class="field">
@@ -280,40 +322,86 @@
       </form>
     </section>
 
-    <section class="panel list-panel" aria-label="저장한 영어 표현">
+    <section class="panel composer" aria-label="주요 단어와 구문 추가">
+      <h2 class="composer-title">주요 단어 · 구문</h2>
+      <p class="composer-desc">문장에서 따로 외우고 싶은 단어, 콜로케이션, 청크를 저장하세요.</p>
+      <form id="termForm">
+        <div class="field-grid">
+          <div class="field">
+            <label for="termInput">단어 · 구문</label>
+            <input id="termInput" type="text" placeholder="예: be made redundant / career ladder" autocomplete="off" required />
+          </div>
+
+          <div class="field">
+            <label for="termMeaningInput">뜻 · 메모</label>
+            <textarea id="termMeaningInput" placeholder="예: 정리해고되다 / 승진 경로, 조직 내 경력 사다리"></textarea>
+          </div>
+
+          <button class="add-btn" type="submit">추가</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel list-panel" aria-label="저장한 영어 학습 항목">
       <div class="list-toolbar">
         <div class="search-wrap">
           <span>⌕</span>
-          <input id="searchInput" type="search" placeholder="영어 표현이나 뜻 검색" autocomplete="off" />
+          <input id="searchInput" type="search" placeholder="문장, 단어·구문, 뜻·메모 통합 검색" autocomplete="off" />
         </div>
       </div>
 
-      <ul id="expressionList" class="expression-list"></ul>
+      <div class="section-block">
+        <div class="section-header">
+          <h2 class="section-title">영어 문장</h2>
+          <span class="section-count"><span id="filteredExpressionCount">0</span>개 표시</span>
+        </div>
+        <ul id="expressionList" class="item-list"></ul>
+      </div>
+
+      <div class="section-block">
+        <div class="section-header">
+          <h2 class="section-title">주요 단어 · 구문</h2>
+          <span class="section-count"><span id="filteredTermCount">0</span>개 표시</span>
+        </div>
+        <ul id="termList" class="item-list"></ul>
+      </div>
     </section>
 
     <p class="footer-note">데이터는 이 브라우저의 localStorage에만 저장됩니다.</p>
   </main>
 
   <script>
-    const STORAGE_KEY = 'mylingo_expressions_v1';
+    const EXPRESSION_STORAGE_KEY = 'mylingo_expressions_v1';
+    const TERM_STORAGE_KEY = 'mylingo_terms_v1';
 
-    const form = document.getElementById('expressionForm');
+    const expressionForm = document.getElementById('expressionForm');
     const englishInput = document.getElementById('englishInput');
     const meaningInput = document.getElementById('meaningInput');
+
+    const termForm = document.getElementById('termForm');
+    const termInput = document.getElementById('termInput');
+    const termMeaningInput = document.getElementById('termMeaningInput');
+
     const searchInput = document.getElementById('searchInput');
     const expressionList = document.getElementById('expressionList');
-    const itemCount = document.getElementById('itemCount');
+    const termList = document.getElementById('termList');
+
+    const expressionCount = document.getElementById('expressionCount');
+    const termCount = document.getElementById('termCount');
+    const filteredExpressionCount = document.getElementById('filteredExpressionCount');
+    const filteredTermCount = document.getElementById('filteredTermCount');
 
     let expressions = [];
+    let terms = [];
 
     // ------------------------------
     // Data layer
-    // 향후 Supabase 이전 시 이 함수들만 교체하면 되도록 분리했습니다.
+    // 향후 Supabase 이전 시 이 함수들을 API 호출 방식으로 교체하면 됩니다.
     // ------------------------------
 
-    function loadExpressions() {
+    function loadLocalItems(storageKey) {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
+        const saved = localStorage.getItem(storageKey);
         return saved ? JSON.parse(saved) : [];
       } catch (error) {
         console.error('저장된 데이터를 불러오지 못했습니다.', error);
@@ -321,26 +409,57 @@
       }
     }
 
-    function saveExpressions(items) {
+    function saveLocalItems(storageKey, items) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+        localStorage.setItem(storageKey, JSON.stringify(items));
       } catch (error) {
         console.error('데이터를 저장하지 못했습니다.', error);
       }
     }
 
-    function createExpressionRecord(english, meaning) {
+    function loadExpressions() {
+      return loadLocalItems(EXPRESSION_STORAGE_KEY);
+    }
+
+    function saveExpressions(items) {
+      saveLocalItems(EXPRESSION_STORAGE_KEY, items);
+    }
+
+    function loadTerms() {
+      return loadLocalItems(TERM_STORAGE_KEY);
+    }
+
+    function saveTerms(items) {
+      saveLocalItems(TERM_STORAGE_KEY, items);
+    }
+
+    function createRecord(text, meaning) {
       return {
         id: (crypto.randomUUID && crypto.randomUUID()) || `${Date.now()}-${Math.random()}`,
-        english: english.trim(),
+        text: text.trim(),
         meaning: meaning.trim(),
         createdAt: new Date().toISOString()
       };
     }
 
     function addExpression(record) {
-      expressions.unshift(record);
+      expressions.unshift({
+        id: record.id,
+        english: record.text,
+        meaning: record.meaning,
+        createdAt: record.createdAt
+      });
       saveExpressions(expressions);
+    }
+
+    function addTerm(record) {
+      terms.unshift({
+        id: record.id,
+        term: record.text,
+        meaning: record.meaning,
+        createdAt: record.createdAt
+      });
+      saveTerms(terms);
     }
 
     function removeExpression(id) {
@@ -348,9 +467,13 @@
       saveExpressions(expressions);
     }
 
+    function removeTerm(id) {
+      terms = terms.filter(item => item.id !== id);
+      saveTerms(terms);
+    }
+
     // ------------------------------
     // ElevenLabs integration placeholder
-    // 나중에 API 연결 시 이 함수 내부를 구현하면 됩니다.
     // ------------------------------
     function playAudioWithElevenLabs(text) {
       // TODO: ElevenLabs Text-to-Speech API 연동
@@ -359,11 +482,11 @@
     }
 
     // ------------------------------
-    // UI
+    // UI helpers
     // ------------------------------
 
     function escapeHtml(value = '') {
-      return value
+      return String(value)
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
@@ -381,35 +504,50 @@
       }).format(date);
     }
 
+    function getSearchKeyword() {
+      return searchInput.value.trim().toLowerCase();
+    }
+
     function getFilteredExpressions() {
-      const keyword = searchInput.value.trim().toLowerCase();
+      const keyword = getSearchKeyword();
       if (!keyword) return expressions;
 
       return expressions.filter(item => {
-        const target = `${item.english} ${item.meaning}`.toLowerCase();
+        const target = `${item.english || ''} ${item.meaning || ''}`.toLowerCase();
+        return target.includes(keyword);
+      });
+    }
+
+    function getFilteredTerms() {
+      const keyword = getSearchKeyword();
+      if (!keyword) return terms;
+
+      return terms.filter(item => {
+        const target = `${item.term || ''} ${item.meaning || ''}`.toLowerCase();
         return target.includes(keyword);
       });
     }
 
     function renderExpressions() {
       const filtered = getFilteredExpressions();
-      itemCount.textContent = expressions.length;
+      expressionCount.textContent = expressions.length;
+      filteredExpressionCount.textContent = filtered.length;
 
       if (filtered.length === 0) {
         expressionList.innerHTML = `
           <li class="empty-state">
-            <strong>${expressions.length === 0 ? '아직 저장한 표현이 없습니다.' : '검색 결과가 없습니다.'}</strong>
-            <span>${expressions.length === 0 ? '위 입력칸에 첫 영어 표현을 추가해 보세요.' : '다른 검색어를 입력해 보세요.'}</span>
+            <strong>${expressions.length === 0 ? '아직 저장한 영어 문장이 없습니다.' : '검색되는 영어 문장이 없습니다.'}</strong>
+            <span>${expressions.length === 0 ? '위 입력칸에 첫 문장을 추가해 보세요.' : '검색어를 바꾸면 다른 항목도 찾을 수 있습니다.'}</span>
           </li>
         `;
         return;
       }
 
       expressionList.innerHTML = filtered.map(item => `
-        <li class="expression-item" data-id="${item.id}">
+        <li class="list-item expression-item" data-id="${escapeHtml(item.id)}">
           <div>
-            <p class="english">${escapeHtml(item.english)}</p>
-            <p class="meaning">${escapeHtml(item.meaning || '뜻·메모 없음')}</p>
+            <p class="primary-text">${escapeHtml(item.english)}</p>
+            <p class="secondary-text">${escapeHtml(item.meaning || '뜻·메모 없음')}</p>
             <div class="item-meta">${formatDate(item.createdAt)}</div>
           </div>
           <div class="actions">
@@ -420,22 +558,74 @@
       `).join('');
     }
 
-    form.addEventListener('submit', (event) => {
+    function renderTerms() {
+      const filtered = getFilteredTerms();
+      termCount.textContent = terms.length;
+      filteredTermCount.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        termList.innerHTML = `
+          <li class="empty-state">
+            <strong>${terms.length === 0 ? '아직 저장한 단어·구문이 없습니다.' : '검색되는 단어·구문이 없습니다.'}</strong>
+            <span>${terms.length === 0 ? '위 입력칸에 첫 단어 또는 구문을 추가해 보세요.' : '같은 검색창에서 문장과 단어·구문을 함께 검색합니다.'}</span>
+          </li>
+        `;
+        return;
+      }
+
+      termList.innerHTML = filtered.map(item => `
+        <li class="list-item term-item" data-id="${escapeHtml(item.id)}">
+          <div>
+            <p class="primary-text">${escapeHtml(item.term)}</p>
+            <p class="secondary-text">${escapeHtml(item.meaning || '뜻·메모 없음')}</p>
+            <div class="item-meta">${formatDate(item.createdAt)}</div>
+          </div>
+          <div class="actions">
+            <button class="icon-btn listen-btn" type="button" aria-label="듣기">듣기</button>
+            <button class="icon-btn danger delete-btn" type="button" aria-label="삭제">삭제</button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function renderAll() {
+      renderExpressions();
+      renderTerms();
+    }
+
+    // ------------------------------
+    // Events
+    // ------------------------------
+
+    expressionForm.addEventListener('submit', (event) => {
       event.preventDefault();
 
       const english = englishInput.value.trim();
       const meaning = meaningInput.value.trim();
       if (!english) return;
 
-      const record = createExpressionRecord(english, meaning);
-      addExpression(record);
-      renderExpressions();
+      addExpression(createRecord(english, meaning));
+      renderAll();
 
-      form.reset();
+      expressionForm.reset();
       englishInput.focus();
     });
 
-    searchInput.addEventListener('input', renderExpressions);
+    termForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const term = termInput.value.trim();
+      const meaning = termMeaningInput.value.trim();
+      if (!term) return;
+
+      addTerm(createRecord(term, meaning));
+      renderAll();
+
+      termForm.reset();
+      termInput.focus();
+    });
+
+    searchInput.addEventListener('input', renderAll);
 
     expressionList.addEventListener('click', (event) => {
       const item = event.target.closest('.expression-item');
@@ -450,16 +640,37 @@
       }
 
       if (event.target.classList.contains('delete-btn')) {
-        const confirmed = confirm(`“${record.english}” 표현을 삭제할까요?`);
+        const confirmed = confirm(`“${record.english}” 문장을 삭제할까요?`);
         if (!confirmed) return;
         removeExpression(id);
-        renderExpressions();
+        renderAll();
+      }
+    });
+
+    termList.addEventListener('click', (event) => {
+      const item = event.target.closest('.term-item');
+      if (!item) return;
+
+      const id = item.dataset.id;
+      const record = terms.find(entry => entry.id === id);
+      if (!record) return;
+
+      if (event.target.classList.contains('listen-btn')) {
+        playAudioWithElevenLabs(record.term);
+      }
+
+      if (event.target.classList.contains('delete-btn')) {
+        const confirmed = confirm(`“${record.term}” 단어·구문을 삭제할까요?`);
+        if (!confirmed) return;
+        removeTerm(id);
+        renderAll();
       }
     });
 
     function initApp() {
       expressions = loadExpressions();
-      renderExpressions();
+      terms = loadTerms();
+      renderAll();
     }
 
     initApp();
