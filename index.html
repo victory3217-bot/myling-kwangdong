@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>마이링고 | 나만의 업무 영어 복습장</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --accent-soft: #f3f4f6;
+      --danger: #b91c1c;
+      --danger-soft: #fef2f2;
+      --shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button, input, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .app-shell {
+      width: min(960px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 56px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .count-badge {
+      white-space: nowrap;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .composer {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .composer-title {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .composer-desc {
+      margin: -7px 0 14px;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #374151;
+    }
+
+    input, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease;
+    }
+
+    input {
+      min-height: 48px;
+      padding: 0 14px;
+    }
+
+    textarea {
+      min-height: 48px;
+      max-height: 120px;
+      resize: vertical;
+      padding: 12px 14px;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #9ca3af;
+      box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.06);
+    }
+
+    .add-btn {
+      align-self: end;
+      min-height: 48px;
+      padding: 0 20px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: white;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .add-btn:hover { opacity: .92; }
+
+    .list-panel { overflow: hidden; }
+
+    .list-toolbar {
+      display: flex;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .search-wrap {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-wrap span {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+    }
+
+    #searchInput { padding-left: 38px; }
+
+    .section-block + .section-block {
+      border-top: 1px solid var(--line);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 15px 18px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 800;
+    }
+
+    .section-count {
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    .item-list { list-style: none; margin: 0; padding: 0; }
+
+    .list-item {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 18px;
+      padding: 20px;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .list-item:last-child { border-bottom: none; }
+
+    .primary-text {
+      margin: 0;
+      font-size: clamp(1.05rem, 2.6vw, 1.25rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      word-break: break-word;
+    }
+
+    .secondary-text {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .item-meta {
+      margin-top: 9px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      padding: 8px 11px;
+      color: #374151;
+      font-size: 0.84rem;
+      font-weight: 700;
+    }
+
+    .icon-btn:hover { background: var(--accent-soft); }
+    .icon-btn.danger:hover { background: var(--danger-soft); color: var(--danger); border-color: #fecaca; }
+
+    .empty-state {
+      padding: 34px 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .empty-state strong {
+      display: block;
+      color: #374151;
+      margin-bottom: 7px;
+    }
+
+    .footer-note {
+      margin: 14px 4px 0;
+      color: #9ca3af;
+      font-size: 0.78rem;
+      text-align: right;
+    }
+
+    @media (max-width: 760px) {
+      .app-shell { width: min(100% - 20px, 960px); padding-top: 24px; }
+      .hero { align-items: flex-start; flex-direction: column; }
+      .field-grid { grid-template-columns: 1fr; }
+      .add-btn { width: 100%; }
+      .list-item { grid-template-columns: 1fr; gap: 14px; }
+      .actions { justify-content: flex-end; }
+      .composer { padding: 16px; }
+      .list-toolbar { padding: 14px; }
+      .list-item { padding: 17px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section class="hero">
+      <div>
+        <h1>마이링고</h1>
+        <p>업무 영어 문장과 주요 단어·구문을 저장하고, 한 번에 검색하는 나만의 복습장</p>
+      </div>
+      <div class="count-badge">
+        문장 <span id="expressionCount">0</span> · 단어/구문 <span id="termCount">0</span>
+      </div>
+    </section>
+
+    <section class="panel composer" aria-label="영어 문장 추가">
+      <h2 class="composer-title">영어 문장</h2>
+      <p class="composer-desc">복습하고 싶은 완성 문장이나 업무 표현을 저장하세요.</p>
+      <form id="expressionForm">
+        <div class="field-grid">
+          <div class="field">
+            <label for="englishInput">영어 표현</label>
+            <input id="englishInput" type="text" placeholder="예: Better than I deserve." autocomplete="off" required />
+          </div>
+
+          <div class="field">
+            <label for="meaningInput">뜻 · 메모</label>
+            <textarea id="meaningInput" placeholder="예: 과분할 정도로 잘 지내요. / 인사 응답 표현"></textarea>
+          </div>
+
+          <button class="add-btn" type="submit">추가</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel composer" aria-label="주요 단어와 구문 추가">
+      <h2 class="composer-title">주요 단어 · 구문</h2>
+      <p class="composer-desc">문장에서 따로 외우고 싶은 단어, 콜로케이션, 청크를 저장하세요.</p>
+      <form id="termForm">
+        <div class="field-grid">
+          <div class="field">
+            <label for="termInput">단어 · 구문</label>
+            <input id="termInput" type="text" placeholder="예: be made redundant / career ladder" autocomplete="off" required />
+          </div>
+
+          <div class="field">
+            <label for="termMeaningInput">뜻 · 메모</label>
+            <textarea id="termMeaningInput" placeholder="예: 정리해고되다 / 승진 경로, 조직 내 경력 사다리"></textarea>
+          </div>
+
+          <button class="add-btn" type="submit">추가</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel list-panel" aria-label="저장한 영어 학습 항목">
+      <div class="list-toolbar">
+        <div class="search-wrap">
+          <span>⌕</span>
+          <input id="searchInput" type="search" placeholder="문장, 단어·구문, 뜻·메모 통합 검색" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-header">
+          <h2 class="section-title">영어 문장</h2>
+          <span class="section-count"><span id="filteredExpressionCount">0</span>개 표시</span>
+        </div>
+        <ul id="expressionList" class="item-list"></ul>
+      </div>
+
+      <div class="section-block">
+        <div class="section-header">
+          <h2 class="section-title">주요 단어 · 구문</h2>
+          <span class="section-count"><span id="filteredTermCount">0</span>개 표시</span>
+        </div>
+        <ul id="termList" class="item-list"></ul>
+      </div>
+    </section>
+
+    <p id="dbStatus" class="footer-note" aria-live="polite">Supabase에서 데이터를 불러오는 중입니다.</p>
+  </main>
+
+  <script>
+    const SUPABASE_URL = 'https://tvjkxvwpiwmtrhmtvxji.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR2amt4dndwaXdtdHJobXR2eGppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1OTQyNDksImV4cCI6MjEwMzE3MDI0OX0.bfyLtttfjeSXr9ydpM4LaNRrTL8KFOE9fS_nw7XIXbQ';
+    const TABLE_NAME = 'words';
+
+    const expressionForm = document.getElementById('expressionForm');
+    const englishInput = document.getElementById('englishInput');
+    const meaningInput = document.getElementById('meaningInput');
+
+    const termForm = document.getElementById('termForm');
+    const termInput = document.getElementById('termInput');
+    const termMeaningInput = document.getElementById('termMeaningInput');
+
+    const searchInput = document.getElementById('searchInput');
+    const expressionList = document.getElementById('expressionList');
+    const termList = document.getElementById('termList');
+
+    const expressionCount = document.getElementById('expressionCount');
+    const termCount = document.getElementById('termCount');
+    const filteredExpressionCount = document.getElementById('filteredExpressionCount');
+    const filteredTermCount = document.getElementById('filteredTermCount');
+    const dbStatus = document.getElementById('dbStatus');
+
+    let expressions = [];
+    let terms = [];
+    let requestInProgress = false;
+
+    // ------------------------------
+    // Supabase data layer
+    // ------------------------------
+
+    function setDbStatus(message, isError = false) {
+      dbStatus.textContent = message;
+      dbStatus.style.color = isError ? '#b91c1c' : '#9ca3af';
+    }
+
+    function getSupabaseHeaders(extra = {}) {
+      return {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        ...extra
+      };
+    }
+
+    async function supabaseRequest(query = '', options = {}) {
+      let response;
+      try {
+        response = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_NAME}${query}`, {
+          ...options,
+          headers: getSupabaseHeaders(options.headers || {})
+        });
+      } catch (error) {
+        throw new Error(`네트워크 요청 실패: ${error.message}`);
+      }
+
+      if (!response.ok) {
+        let detail = '';
+        try {
+          const body = await response.json();
+          detail = body.message || body.details || body.hint || JSON.stringify(body);
+        } catch (_) {
+          detail = await response.text();
+        }
+        throw new Error(`Supabase ${response.status}: ${detail || response.statusText}`);
+      }
+
+      if (response.status === 204) return null;
+      const body = await response.text();
+      return body ? JSON.parse(body) : null;
+    }
+
+    async function loadAllItems() {
+      const rows = await supabaseRequest('?select=id,kind,text,meaning,created_at&order=created_at.desc');
+
+      expressions = rows
+        .filter(item => item.kind === 'expression')
+        .map(item => ({
+          id: item.id,
+          english: item.text,
+          meaning: item.meaning || '',
+          createdAt: item.created_at
+        }));
+
+      terms = rows
+        .filter(item => item.kind === 'term')
+        .map(item => ({
+          id: item.id,
+          term: item.text,
+          meaning: item.meaning || '',
+          createdAt: item.created_at
+        }));
+    }
+
+    async function insertItem(kind, text, meaning) {
+      const rows = await supabaseRequest('', {
+        method: 'POST',
+        headers: { 'Prefer': 'return=representation' },
+        body: JSON.stringify({
+          kind,
+          text: text.trim(),
+          meaning: meaning.trim()
+        })
+      });
+      return rows[0];
+    }
+
+    async function deleteItem(id) {
+      await supabaseRequest(`?id=eq.${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: { 'Prefer': 'return=minimal' }
+      });
+    }
+
+    // ------------------------------
+    // ElevenLabs integration placeholder
+    // ------------------------------
+    function playAudioWithElevenLabs(text) {
+      // TODO: ElevenLabs Text-to-Speech API 연동
+      console.log('ElevenLabs 연결 예정:', text);
+    }
+
+    // ------------------------------
+    // UI helpers
+    // ------------------------------
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatDate(isoString) {
+      const date = new Date(isoString);
+      if (Number.isNaN(date.getTime())) return '';
+      return new Intl.DateTimeFormat('ko-KR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      }).format(date);
+    }
+
+    function getSearchKeyword() {
+      return searchInput.value.trim().toLowerCase();
+    }
+
+    function getFilteredExpressions() {
+      const keyword = getSearchKeyword();
+      if (!keyword) return expressions;
+
+      return expressions.filter(item => {
+        const target = `${item.english || ''} ${item.meaning || ''}`.toLowerCase();
+        return target.includes(keyword);
+      });
+    }
+
+    function getFilteredTerms() {
+      const keyword = getSearchKeyword();
+      if (!keyword) return terms;
+
+      return terms.filter(item => {
+        const target = `${item.term || ''} ${item.meaning || ''}`.toLowerCase();
+        return target.includes(keyword);
+      });
+    }
+
+    function renderExpressions() {
+      const filtered = getFilteredExpressions();
+      expressionCount.textContent = expressions.length;
+      filteredExpressionCount.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        expressionList.innerHTML = `
+          <li class="empty-state">
+            <strong>${expressions.length === 0 ? '아직 저장한 영어 문장이 없습니다.' : '검색되는 영어 문장이 없습니다.'}</strong>
+            <span>${expressions.length === 0 ? '위 입력칸에 첫 문장을 추가해 보세요.' : '검색어를 바꾸면 다른 항목도 찾을 수 있습니다.'}</span>
+          </li>
+        `;
+        return;
+      }
+
+      expressionList.innerHTML = filtered.map(item => `
+        <li class="list-item expression-item" data-id="${escapeHtml(item.id)}">
+          <div>
+            <p class="primary-text">${escapeHtml(item.english)}</p>
+            <p class="secondary-text">${escapeHtml(item.meaning || '뜻·메모 없음')}</p>
+            <div class="item-meta">${formatDate(item.createdAt)}</div>
+          </div>
+          <div class="actions">
+            <button class="icon-btn listen-btn" type="button" aria-label="듣기">듣기</button>
+            <button class="icon-btn danger delete-btn" type="button" aria-label="삭제">삭제</button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function renderTerms() {
+      const filtered = getFilteredTerms();
+      termCount.textContent = terms.length;
+      filteredTermCount.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        termList.innerHTML = `
+          <li class="empty-state">
+            <strong>${terms.length === 0 ? '아직 저장한 단어·구문이 없습니다.' : '검색되는 단어·구문이 없습니다.'}</strong>
+            <span>${terms.length === 0 ? '위 입력칸에 첫 단어 또는 구문을 추가해 보세요.' : '같은 검색창에서 문장과 단어·구문을 함께 검색합니다.'}</span>
+          </li>
+        `;
+        return;
+      }
+
+      termList.innerHTML = filtered.map(item => `
+        <li class="list-item term-item" data-id="${escapeHtml(item.id)}">
+          <div>
+            <p class="primary-text">${escapeHtml(item.term)}</p>
+            <p class="secondary-text">${escapeHtml(item.meaning || '뜻·메모 없음')}</p>
+            <div class="item-meta">${formatDate(item.createdAt)}</div>
+          </div>
+          <div class="actions">
+            <button class="icon-btn listen-btn" type="button" aria-label="듣기">듣기</button>
+            <button class="icon-btn danger delete-btn" type="button" aria-label="삭제">삭제</button>
+          </div>
+        </li>
+      `).join('');
+    }
+
+    function renderAll() {
+      renderExpressions();
+      renderTerms();
+    }
+
+    function setFormsDisabled(disabled) {
+      requestInProgress = disabled;
+      [...expressionForm.elements, ...termForm.elements].forEach(element => {
+        element.disabled = disabled;
+      });
+    }
+
+    // ------------------------------
+    // Events
+    // ------------------------------
+
+    expressionForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (requestInProgress) return;
+
+      const english = englishInput.value.trim();
+      const meaning = meaningInput.value.trim();
+      if (!english) return;
+
+      try {
+        setFormsDisabled(true);
+        setDbStatus('영어 문장을 Supabase에 저장하는 중입니다.');
+
+        const row = await insertItem('expression', english, meaning);
+        expressions.unshift({
+          id: row.id,
+          english: row.text,
+          meaning: row.meaning || '',
+          createdAt: row.created_at
+        });
+
+        expressionForm.reset();
+        renderAll();
+        setDbStatus('Supabase 연결됨 · 데이터가 온라인 DB에 저장됩니다.');
+        englishInput.focus();
+      } catch (error) {
+        console.error(error);
+        setDbStatus(`저장 실패: ${error.message}`, true);
+      } finally {
+        setFormsDisabled(false);
+      }
+    });
+
+    termForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (requestInProgress) return;
+
+      const term = termInput.value.trim();
+      const meaning = termMeaningInput.value.trim();
+      if (!term) return;
+
+      try {
+        setFormsDisabled(true);
+        setDbStatus('단어·구문을 Supabase에 저장하는 중입니다.');
+
+        const row = await insertItem('term', term, meaning);
+        terms.unshift({
+          id: row.id,
+          term: row.text,
+          meaning: row.meaning || '',
+          createdAt: row.created_at
+        });
+
+        termForm.reset();
+        renderAll();
+        setDbStatus('Supabase 연결됨 · 데이터가 온라인 DB에 저장됩니다.');
+        termInput.focus();
+      } catch (error) {
+        console.error(error);
+        setDbStatus(`저장 실패: ${error.message}`, true);
+      } finally {
+        setFormsDisabled(false);
+      }
+    });
+
+    searchInput.addEventListener('input', renderAll);
+
+    expressionList.addEventListener('click', async (event) => {
+      const item = event.target.closest('.expression-item');
+      if (!item) return;
+
+      const id = item.dataset.id;
+      const record = expressions.find(entry => entry.id === id);
+      if (!record) return;
+
+      if (event.target.classList.contains('listen-btn')) {
+        playAudioWithElevenLabs(record.english);
+      }
+
+      if (event.target.classList.contains('delete-btn')) {
+        const confirmed = confirm(`“${record.english}” 문장을 삭제할까요?`);
+        if (!confirmed) return;
+
+        try {
+          setDbStatus('Supabase에서 문장을 삭제하는 중입니다.');
+          await deleteItem(id);
+          expressions = expressions.filter(entry => entry.id !== id);
+          renderAll();
+          setDbStatus('Supabase 연결됨 · 삭제가 반영되었습니다.');
+        } catch (error) {
+          console.error(error);
+          setDbStatus(`삭제 실패: ${error.message}`, true);
+        }
+      }
+    });
+
+    termList.addEventListener('click', async (event) => {
+      const item = event.target.closest('.term-item');
+      if (!item) return;
+
+      const id = item.dataset.id;
+      const record = terms.find(entry => entry.id === id);
+      if (!record) return;
+
+      if (event.target.classList.contains('listen-btn')) {
+        playAudioWithElevenLabs(record.term);
+      }
+
+      if (event.target.classList.contains('delete-btn')) {
+        const confirmed = confirm(`“${record.term}” 단어·구문을 삭제할까요?`);
+        if (!confirmed) return;
+
+        try {
+          setDbStatus('Supabase에서 단어·구문을 삭제하는 중입니다.');
+          await deleteItem(id);
+          terms = terms.filter(entry => entry.id !== id);
+          renderAll();
+          setDbStatus('Supabase 연결됨 · 삭제가 반영되었습니다.');
+        } catch (error) {
+          console.error(error);
+          setDbStatus(`삭제 실패: ${error.message}`, true);
+        }
+      }
+    });
+
+    async function initApp() {
+      try {
+        setFormsDisabled(true);
+        setDbStatus('Supabase에서 데이터를 불러오는 중입니다.');
+        await loadAllItems();
+        renderAll();
+        setDbStatus('Supabase 연결됨 · 데이터가 온라인 DB에 저장됩니다.');
+      } catch (error) {
+        console.error(error);
+        expressions = [];
+        terms = [];
+        renderAll();
+        setDbStatus(`불러오기 실패: ${error.message}`, true);
+      } finally {
+        setFormsDisabled(false);
+      }
+    }
+
+    initApp();
+  </script>
+</body>
+</html>
